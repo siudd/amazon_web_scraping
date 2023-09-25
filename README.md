@@ -126,3 +126,10 @@ df = amazon_search('wireless earbuds') # or any other keywords you like
 First we want to see the percentage of Bestseller / Amazon's Choice item within the search result.  A pie chart was plot.
 ![image](https://github.com/siudd/amazon_web_scraping/assets/144144392/d30023c1-a2b2-44ed-bc85-7812b7f2fdc3)
 
+Then, we want to check out the top 10 discounted items in the result.  This also incorporated the coupon as well.
+![image](https://github.com/siudd/amazon_web_scraping/assets/144144392/fbc2048a-d0cd-428e-a33b-3c48cffc58e6)
+
+Lastly, we want to know the rating distribution of the search result.
+![image](https://github.com/siudd/amazon_web_scraping/assets/144144392/1274895f-1b34-41d3-8228-8f51d8d69697)
+
+With the powerful libraries and proper tweaks & tuning, web scraping on Amazon could be a simple task!
