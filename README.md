@@ -32,7 +32,7 @@ def amazon_scrap(sURL):
 
 Try to use Google Colab for this so the web scraping has to run headless.  The function <code>amazon_scrape</code> accepts a string variable <code>sURL</code> for the page want to scape.  It first checks the returned HTML title and see if it is a page for bot detection rather than the page we want.  It will sleep for 1-3 seconds and retry until it is not the bot detection page.  Finally return a <code>BeautifulSoup</code> object. 
 
-Another function amazon_search is to scrap the items from the return search result and store them in a dataframe for future use.
+Another function <code>amazon_search</code> is to scrap the items from the return search result and store them in a dataframe for future use.
 
 ```python
 def amazon_search(sKeyWord):
@@ -123,4 +123,6 @@ To web scape the search result you want, simply call the functions with below.
 df = amazon_search('wireless earbuds') # or any other keywords you like
 ```
 
-Based on the data scrapped, 3 simple analysis were done.
+First we want to see the percentage of Bestseller / Amazon's Choice item within the search result.  A pie chart was plot.
+![image](https://github.com/siudd/amazon_web_scraping/assets/144144392/d30023c1-a2b2-44ed-bc85-7812b7f2fdc3)
+
