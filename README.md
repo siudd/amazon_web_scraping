@@ -115,4 +115,12 @@ def amazon_search(sKeyWord):
   return dfResult
 ```
 
-This function accepts a string <code>sKeyWord</code> and build the URL for web scraping with a loop. As most of the search result will return 7 pages only so limited the iteration of search result page to 7.  Item details are extracted from their corresponding elements and first stored in a list and eventually converted into a dataframe with meaningful headers.
+This function accepts a string <code>sKeyWord</code> and build the URL needed for web scraping with a loop. Imposed a 7 pages limited of the search result as most search return no more than that.  Item details are extracted from their corresponding elements, first stored in a list and eventually converted into a dataframe with more readable headers for further analysis.
+
+To web scape the search result you want, simply call the functions with below.
+
+```python
+df = amazon_search('wireless earbuds') # or any other keywords you like
+```
+
+Based on the data scrapped, 3 simple analysis were done.
