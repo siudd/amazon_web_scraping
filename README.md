@@ -30,4 +30,89 @@ def amazon_scrap(sURL):
   return bs4soup
 ```
 
-Try to use Google Colab for this so the web scraping has to run headless.  The function <code>amazon_scrape</code> accepts a string variable <code>URL</code> for the page want to scape.  It first checks the returned HTML title and see if it is a page for bot detection rather than the page we want.  It will sleep for 1-3 seconds and retry until it is not the bot detection page.  Finally return a <code>BeautifulSoup</code> object. 
+Try to use Google Colab for this so the web scraping has to run headless.  The function <code>amazon_scrape</code> accepts a string variable <code>sURL</code> for the page want to scape.  It first checks the returned HTML title and see if it is a page for bot detection rather than the page we want.  It will sleep for 1-3 seconds and retry until it is not the bot detection page.  Finally return a <code>BeautifulSoup</code> object. 
+
+Another function amazon_search is to scrap the items from the return search result and store them in a dataframe for future use.
+
+```python
+def amazon_search(sKeyWord):
+  #get all items attributes from the search result
+  page_no = 1
+  item_count = 0
+  search_result = []
+  soup = BeautifulSoup("", 'lxml')
+  while page_no <= 7:
+    url = "https://www.amazon.ca/s?k=" + urllib.parse.quote(sKeyWord) + "&page=" + str(page_no)
+    soup = amazon_scrap(url)
+    product_listings = soup.find_all("div", {'class': 'a-section a-spacing-base'})
+    for product in product_listings:
+      #title
+      title = product.find("span", {'class': 'a-size-base-plus a-color-base a-text-normal'}).text.strip()
+      href = urllib.parse.unquote(product.find('a', class_='a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal')['href'])
+      #ASIN & Href
+      match = re.search(r'/[dg]p/([a-zA-Z0-9]{10})/', href)
+      if match:
+        asin = match.group(1)
+        href = match.group(0)
+      else:
+        asin = 'video'
+      #Prices
+      try:
+        price = float(product.find('span', class_='a-price').find('span', class_='a-offscreen').text.strip().split('$')[1].replace(',',''))
+      except AttributeError:
+        price = np.nan
+      try:
+        original_price = float(product.find('span', class_='a-price a-text-price').find('span', class_='a-offscreen').text.strip().split('$')[1].replace(',',''))
+      except AttributeError:
+        original_price = np.nan
+      try:
+        coupon = product.find('span', class_='s-coupon-unclipped').find('span', class_='a-size-base s-highlighted-text-padding aok-inline-block s-coupon-highlight-color').text.strip()
+        if "Save" in coupon:
+          coupon = float(coupon.split('$')[1].replace(',',''))
+        else:
+          coupon = float(coupon.split()[0].replace('$',''))
+      except AttributeError:
+        coupon = np.nan
+      rating = product.find('span', class_='a-icon-alt')
+      #Rating
+      if rating:
+          rating = float(rating.text.strip().split()[0])
+      else:
+          rating = np.nan
+      #Bestseller / Amazon's Choice
+      if product.find('div',class_='a-row a-badge-region'):
+        badge_text = (product.find('div',class_='a-row a-badge-region').find('span',class_='a-badge-text')).text.strip()
+        if badge_text == "Amazon's":
+          bestseller = False
+          amazon_choice = True
+        elif badge_text == "Bestseller":
+          bestseller = True
+          amazon_choice = False
+        else:
+          bestseller = False
+          amazon_choice = False
+      else:
+        bestseller = False
+        amazon_choice = False
+      search_result.append([item_count, asin, title, href, price, original_price, coupon, rating, bestseller, amazon_choice])
+      item_count = item_count + 1
+    page_no = page_no + 1
+
+  dfResult = pd.DataFrame(search_result)
+  dfResult = dfResult.rename(columns={0: 'ID'})
+  dfResult = dfResult.rename(columns={1: 'ASIN'})
+  dfResult = dfResult.rename(columns={2: 'Title'})
+  dfResult = dfResult.rename(columns={3: 'Href'})
+  dfResult = dfResult.rename(columns={4: 'Price'})
+  dfResult = dfResult.rename(columns={5: 'Original_Price'})
+  dfResult = dfResult.rename(columns={6: 'Coupon'})
+  dfResult = dfResult.rename(columns={7: 'Rating'})
+  dfResult = dfResult.rename(columns={8: 'Bestseller'})
+  dfResult = dfResult.rename(columns={9: 'Amazon_Choice'})
+  dfResult['Original_Price'] = dfResult.apply(lambda row: row['Price'] if pd.isna(row['Original_Price']) else row['Original_Price'], axis=1)
+  dfResult['Price_After_Coupon'] = dfResult.apply(lambda row: row['Price'] - row['Coupon'] if not pd.isna(row['Coupon']) else row['Price'], axis=1)
+  dfResult['Discount_Percentage'] = ((dfResult['Original_Price'] - dfResult['Price_After_Coupon']) / dfResult['Original_Price']) * 100
+  return dfResult
+```
+
+This function accepts a string <code>sKeyWord</code> and build the URL for web scraping with a loop. As most of the search result will return 7 pages only so limited the iteration of search result page to 7.  Item details are extracted from their corresponding elements and first stored in a list and eventually converted into a dataframe with meaningful headers.
