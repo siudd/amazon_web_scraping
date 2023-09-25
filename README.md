@@ -1,6 +1,6 @@
 # Amazon Web Scraping with Python (Selenium &amp; BeautifulSoup)
 
-Playing around with web scraping with Python and want to extract product data from the search result page.  Initially went for BS4 & Request but the successful rate of evading Amazon bot detection wasn't good.  So end up switch to Selenium and thing almost work flawlessly.  Here is the core function to perform the web scraping.
+Playing around with web scraping with Python and want to extract product data from the search result page.  Initially went for BS4 & Request but the successful rate of evading Amazon bot detection wasn't good.  So end up switched to Selenium and thing almost work flawlessly.  Here is the core function to perform the web scraping.
 
 ```python
 def amazon_scrap(sURL):
