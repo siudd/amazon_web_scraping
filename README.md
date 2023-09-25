@@ -30,4 +30,4 @@ def amazon_scrap(sURL):
   return bs4soup
 ```
 
-Try to use Google Colab for this so the web scraping has to run headless.  The function <code>amazon_scrape</code> accepts a <code>string URL</code> for the page want to scape.  It first checks the returned HTML title and see if it is a page for bot detection rather than the page we want.  It will sleep for 1-3 seconds and retry until it is not the bot detection page.  Finally return a ,code>BeautifulSoup</code> object. 
+Try to use Google Colab for this so the web scraping has to run headless.  The function <code>amazon_scrape</code> accepts a string variable <code>URL</code> for the page want to scape.  It first checks the returned HTML title and see if it is a page for bot detection rather than the page we want.  It will sleep for 1-3 seconds and retry until it is not the bot detection page.  Finally return a <code>BeautifulSoup</code> object. 
